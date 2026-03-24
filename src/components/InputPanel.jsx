@@ -5,12 +5,12 @@ function InputPanel({ onRun }) {
   const [capacity, setCapacity] = useState(10);
 
   const [crops, setCrops] = useState([
-    { name: "Rice", land: 4, profit: 50 },
-    { name: "Wheat", land: 3, profit: 40 }
+    { name: "Rice", land: "", profit: "" },
+    { name: "Wheat", land: "", profit: "" }
   ]);
 
   const addCrop = () => {
-    setCrops([...crops, { name: "", land: 0, profit: 0 }]);
+    setCrops([...crops, { name: "", land: "", profit: "" }]);
   };
 
   const updateCrop = (index, field, value) => {
@@ -40,8 +40,10 @@ function InputPanel({ onRun }) {
 
         <input
             type="number"
+            min="0"
+            placeholder="Enter total land"
             value={capacity}
-            onChange={(e) => setCapacity(Number(e.target.value))}
+            onChange={(e) => setCapacity(e.target.value === "" ? "" : Number(e.target.value))}
             className="border p-2 rounded w-full mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         </div>
@@ -82,20 +84,26 @@ function InputPanel({ onRun }) {
 
             <input
                 type="number"
+                min="0"
                 placeholder="Land"
                 value={crop.land}
                 onChange={(e) =>
-                updateCrop(index, "land", Number(e.target.value))
+                updateCrop(index, "land", 
+                    e.target.value === "" ? "" : Number(e.target.value)
+                )
                 }
                 className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
 
             <input
                 type="number"
+                min="0"
                 placeholder="Profit"
                 value={crop.profit}
                 onChange={(e) =>
-                updateCrop(index, "profit", Number(e.target.value))
+                updateCrop(index, "profit", 
+                    e.target.value === "" ? "" : Number(e.target.value)
+                )
                 }
                 className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
@@ -127,7 +135,13 @@ function InputPanel({ onRun }) {
         </button>
 
         <button
-            onClick={() => onRun(crops, capacity)}
+            onClick={() => {
+                if (capacity === "" || crops.some(c => c.land === "" || c.profit === "")) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+                onRun(crops, capacity);
+            }}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full md:w-auto"
         >
             Run Optimization
